@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Plataforma E-Learning</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm mt-5">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-mortarboard fs-1 text-primary"></i>
+                            <h2 class="card-title">E-Learning Platform</h2>
+                            <p class="text-muted">Plataforma de Evaluación de Ingeniería</p>
+                        </div>
+
+                        <!-- Flash Messages -->
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i> Credenciales inválidas
+                        </div>
+                        
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> Sesión cerrada exitosamente
+                        </div>
+                        
+                        <div th:if="${success}" class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+                        </div>
+
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="username" name="username" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center mt-3">
+                            <p class="mb-0">¿No tienes cuenta? 
+                                <a th:href="@{/register}" class="text-decoration-none">Regístrate aquí</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
