@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/monthly-report', [CollaboratorDashboard::class, 'monthlyReport'])->name('monthly.report');
         
         // Gestión de afiliaciones
-        Route::resource('businesses', 'Collaborator\BusinessController')->only(['index', 'show', 'create', 'store']);
+        Route::resource('businesses', Collaborator\BusinessController::class)->only(['index', 'show', 'create', 'store']);
     });
     
     // Panel de Comercio Afiliado
