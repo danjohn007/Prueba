@@ -37,11 +37,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/export-report', [AdminDashboard::class, 'exportReport'])->name('export.report');
         
         // Gestión de usuarios y afiliaciones
-        Route::resource('users', 'Admin\UserController');
-        Route::resource('businesses', 'Admin\BusinessController');
-        Route::resource('payments', 'Admin\PaymentController');
-        Route::resource('commissions', 'Admin\CommissionController');
-        Route::resource('events', 'Admin\EventController');
+        Route::resource('users', UserController::class);
+        Route::resource('businesses', BusinessController::class);
+        Route::resource('payments', PaymentController::class);
+        Route::resource('commissions', CommissionController::class);
+        Route::resource('events', EventController::class);
     });
     
     // Panel de Colaborador
