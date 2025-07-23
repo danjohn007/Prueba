@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Evaluaciones - E-Learning</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/admin/dashboard}">
+                <i class="bi bi-mortarboard"></i> E-Learning Admin
+            </a>
+            
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/evaluations}">Evaluaciones</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <span sec:authentication="name"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/logout}">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Flash Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1 class="h3">
+                    <i class="bi bi-file-text"></i> Gestión de Evaluaciones
+                </h1>
+                <p class="text-muted">Administra las evaluaciones de tu plataforma</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a th:href="@{/admin/evaluations/new}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nueva Evaluación
+                </a>
+            </div>
+        </div>
+
+        <!-- Evaluations Table -->
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(evaluations)}" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <h4 class="mt-3">No hay evaluaciones</h4>
+                    <p>Comienza creando tu primera evaluación</p>
+                    <a th:href="@{/admin/evaluations/new}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Crear Evaluación
+                    </a>
+                </div>
+                
+                <div th:if="${!#lists.isEmpty(evaluations)}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th>Duración</th>
+                                <th>Nota Mínima</th>
+                                <th>Estado</th>
+                                <th>Fecha de Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="evaluation : ${evaluations}">
+                                <td>
+                                    <strong th:text="${evaluation.title}"></strong>
+                                </td>
+                                <td>
+                                    <span th:text="${#strings.abbreviate(evaluation.description, 50)}"></span>
+                                </td>
+                                <td th:text="${evaluation.durationMinutes + ' min'}"></td>
+                                <td th:text="${evaluation.passingScore + '%'}"></td>
+                                <td>
+                                    <span th:if="${evaluation.isActive}" class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Activa
+                                    </span>
+                                    <span th:unless="${evaluation.isActive}" class="badge bg-secondary">
+                                        <i class="bi bi-pause-circle"></i> Inactiva
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(evaluation.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/admin/evaluations/' + ${evaluation.id} + '/edit'}" 
+                                           class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        
+                                        <form th:if="${evaluation.isActive}" 
+                                              th:action="@{'/admin/evaluations/' + ${evaluation.id} + '/deactivate'}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                                    title="Desactivar"
+                                                    onclick="return confirm('¿Estás seguro de desactivar esta evaluación?')">
+                                                <i class="bi bi-pause"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form th:unless="${evaluation.isActive}" 
+                                              th:action="@{'/admin/evaluations/' + ${evaluation.id} + '/activate'}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" 
+                                                    title="Activar">
+                                                <i class="bi bi-play"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form th:action="@{'/admin/evaluations/' + ${evaluation.id} + '/delete'}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    title="Eliminar"
+                                                    onclick="return confirm('¿Estás seguro de eliminar esta evaluación? Esta acción no se puede deshacer.')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
